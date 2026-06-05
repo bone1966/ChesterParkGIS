@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Chester NJ Parks & Black River Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4Qj6Zp8rG8z2zGkS9JQxFd3zv0vM36rYbZf2z8TGIQ="
+    crossorigin=""
+  />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+    .legend {
+      background: white;
+      padding: 8px 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .legend span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 6px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1j7kGStb6QpGpG8JwYp3p4s46HoPazTAp3vG2f0M="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // Center roughly on Chester Borough
+    var map = L.map('map').setView([40.79, -74.69], 13);
+
+    // Base map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Simple Chester Borough boundary (approximate polygon)
+    var chesterBorough = L.polygon([
+      [40.800, -74.705],
+      [40.805, -74.685],
+      [40.790, -74.675],
+      [40.780, -74.680],
+      [40.780, -74.700]
+    ], {
+      color: '#1f4b99',
+      weight: 2,
+      fillColor: '#1f4b99',
+      fillOpacity: 0.08
+    }).addTo(map);
+
+    chesterBorough.bindPopup('<strong>Chester Borough</strong><br>Quieter pace than commuter suburbs to the east.');
+
+    // Parks (approximate locations)
+    var parks = [
+      {
+        name: 'Chubb Park',
+        coords: [40.792, -74.703]
+      },
+      {
+        name: 'Tiger Brook Park',
+        coords: [40.782, -74.682]
+      },
+      {
+        name: 'Black River Park',
+        coords: [40.785, -74.700]
+      }
+    ];
+
+    parks.forEach(function (p) {
+      L.circleMarker(p.coords, {
+        radius: 6,
+        color: '#2e7d32',
+        fillColor: '#43a047',
+        fillOpacity: 0.9
+      })
+      .addTo(map)
+      .bindPopup('<strong>' + p.name + '</strong><br>Chester Township park facility.');
+    });
+
+    // Black River (approximate line)
+    var blackRiver = L.polyline([
+      [40.805, -74.710],
+      [40.800, -74.705],
+      [40.795, -74.700],
+      [40.790, -74.695],
+      [40.785, -74.690],
+      [40.780, -74.685]
+    ], {
+      color: '#1565c0',
+      weight: 3
+    }).addTo(map);
+
+    blackRiver.bindPopup('<strong>Black River</strong><br>Natural backdrop that photographs well and lives even better.');
+
+    // Simple legend
+    var legend = L.control({ position: 'bottomright' });
+
+    legend.onAdd = function () {
+      var div = L.DomUtil.create('div', 'legend');
+      div.innerHTML =
+        '<div><span style="background:#1f4b99;"></span>Borough boundary</div>' +
+        '<div><span style="background:#43a047;"></span>Parks (Chubb, Tiger Brook, Black River)</div>' +
+        '<div><span style="background:#1565c0;"></span>Black River</div>';
+      return div;
+    };
+
+    legend.addTo(map);
+  </script>
+</body>
+</html>
